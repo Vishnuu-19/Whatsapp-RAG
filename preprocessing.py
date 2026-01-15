@@ -33,25 +33,49 @@ def parse_timestamp(date_str: str, time_str: str)-> datetime:
         "%m/%d/%y %I:%M:%S %p"
     )
 
-def is_system_check(message: str):
-    SYSTEM_PATTERNS = [
-        "end-to-end encrypted",
-        "messages and calls are encrypted",
-        "this message was deleted",
-        "you deleted this message",
-        "added",
-        "joined",
-        "left",
-        "changed the group description",
-    ]
-    if any(patterns in SYSTEM_PATTERNS for patterns in message): 
-        return True 
-    else:
-        return False
-
 MESSAGE_START_RE = re.compile(
-    r'^\[(\d{1,2}/\d{1,2}/\d{2}),\s([\d:]+\s[AP]M)\]\s(.+?):\s(.*)'
+    r'\[(\d{1,2}/\d{1,2}/\d{2}),\s([\d:]+\s[AP]M)\]\s(.+?):\s(.*)'
 )
+
+SYSTEM_MESSAGE_RE = re.compile(
+    r"(messages and calls are end-to-end encrypted"
+    r"|this message was deleted"
+    r"|you deleted this message"
+    r"|security code changed"
+    r"|missed (voice|video) call"
+    r"|changed (the subject|the group description|this group's icon)"
+    r"|added|removed|left|joined)"
+    r"|(document|image) omitted",
+    re.IGNORECASE
+)
+
+def is_system_check(message: str) -> bool:
+    message = message.replace("\u200e", "").replace("\u200f", "")
+    return SYSTEM_MESSAGE_RE.search(message) is not None
+
+def split_system_messages(messages):
+    system_msg,normal_msg =[],[]
+
+    for msg in messages:
+        if msg["is_system"]:
+            system_msg.append(msg)
+        else:
+            normal_msg.append(msg)
+    
+    return normal_msg,system_msg
+
+def write_messages_json(messages, output_path: str):
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok = True)
+
+    messages_copy = []
+    for msg in messages:
+        msg_copy = msg.copy()
+        msg_copy["timestamp"] = msg_copy["timestamp"].isoformat()
+        messages_copy.append(msg_copy)
+
+    with output_path.open("w", encoding="utf-8") as f:
+        json.dump(messages_copy, f, ensure_ascii=False, indent=2)
 
 def parse_whatsapp_chat(file_path: str):
     messages = []
@@ -63,7 +87,7 @@ def parse_whatsapp_chat(file_path: str):
     with open(file_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.rstrip("\n")
-            match = MESSAGE_START_RE.match(line)
+            match = MESSAGE_START_RE.search(line)
 
             if match:
                 # finalize previous message if exists
@@ -90,6 +114,8 @@ def parse_whatsapp_chat(file_path: str):
                     "raw_lines_count": 0,
                     "is_system": is_system_check(line) 
                 }
+                if current_msg["is_system"]:
+                    current_msg["message_type"] = "system"
                 
                 raw_lines = [first_text]
 
@@ -106,15 +132,11 @@ def parse_whatsapp_chat(file_path: str):
         current_msg["message_type"] = detect_message_type(current_msg["message"])
         messages.append(current_msg)
         
-    write_messages_json(messages,"data/processed/messages.json")    
-    return messages
-    
-def write_messages_json(messages, output_path: str):
-    output_path = Path(output_path)
-    # output_path.parent.mkdir(parent=True, exist_ok = True)
+    normal_msgs,system_msgs = split_system_messages(messages)
 
-    with output_path.open("w", encoding="utf-8") as f:
-        for msg in messages:
-            msg_copy = msg.copy()
-            msg_copy["timestamp"] = msg_copy["timestamp"].isoformat()
-            f.write(json.dumps(msg_copy, ensure_ascii=False) + "\n")
+    write_messages_json(normal_msgs,"data/processed/messages.json")
+    write_messages_json(system_msgs,"data/processed/system_messages.json")
+
+    return normal_msgs
+
+    
