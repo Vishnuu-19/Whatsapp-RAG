@@ -134,8 +134,8 @@ def parse_whatsapp_chat(file_path: str):
         
     normal_msgs,noise_msgs = split_noise_messages(messages)
 
-    write_messages_json(normal_msgs,"data/processed/messages.json")
-    write_messages_json(noise_msgs,"data/processed/noise_messages.json")
+    # write_messages_json(normal_msgs,"data/processed/messages.json")
+    # write_messages_json(noise_msgs,"data/processed/noise_messages.json")
 
     return normal_msgs
 
