@@ -127,7 +127,8 @@ Thumbs.db
 # Data files (for RAG projects)
 *.csv
 *.json
-*.txt
-data/
+# *.txt
+data/raw
+data/processed
 logs/
 temp/
