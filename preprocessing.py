@@ -49,20 +49,20 @@ SYSTEM_MESSAGE_RE = re.compile(
     re.IGNORECASE
 )
 
-def is_system_check(message: str) -> bool:
+def is_system_message(message: str) -> bool:
     message = message.replace("\u200e", "").replace("\u200f", "")
     return SYSTEM_MESSAGE_RE.search(message) is not None
 
-def split_system_messages(messages):
-    system_msg,normal_msg =[],[]
+def split_noise_messages(messages):
+    noise_msg,normal_msg =[],[]
 
     for msg in messages:
-        if msg["is_system"]:
-            system_msg.append(msg)
+        if msg["is_system"] or msg["message_type"]=="reaction":
+            noise_msg.append(msg)
         else:
             normal_msg.append(msg)
     
-    return normal_msg,system_msg
+    return normal_msg,noise_msg
 
 def write_messages_json(messages, output_path: str):
     output_path = Path(output_path)
@@ -112,7 +112,7 @@ def parse_whatsapp_chat(file_path: str):
                     "message_type": None,
                     "is_multiline": False,
                     "raw_lines_count": 0,
-                    "is_system": is_system_check(line) 
+                    "is_system": is_system_message(line) 
                 }
                 if current_msg["is_system"]:
                     current_msg["message_type"] = "system"
@@ -132,10 +132,10 @@ def parse_whatsapp_chat(file_path: str):
         current_msg["message_type"] = detect_message_type(current_msg["message"])
         messages.append(current_msg)
         
-    normal_msgs,system_msgs = split_system_messages(messages)
+    normal_msgs,noise_msgs = split_noise_messages(messages)
 
     write_messages_json(normal_msgs,"data/processed/messages.json")
-    write_messages_json(system_msgs,"data/processed/system_messages.json")
+    write_messages_json(noise_msgs,"data/processed/noise_messages.json")
 
     return normal_msgs
 

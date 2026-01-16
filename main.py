@@ -1,5 +1,5 @@
 import pandas as pd
-from preprocessing import parse_whatsapp_chat, write_messages_json
+from preprocessing import parse_whatsapp_chat
 
 if __name__ == "__main__":
     messages = parse_whatsapp_chat(r"C:\Users\vishn\OneDrive\Desktop\Whatsapp-RAG\data\raw\chat.txt")
