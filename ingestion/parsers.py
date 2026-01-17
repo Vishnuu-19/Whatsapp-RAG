@@ -57,18 +57,24 @@ def parse_messages_start(line: str):
     return None
 
 def parse_timestamp(date_str, time_str):
-    time_str = time_str.upper().strip()
+    time_str = time_str.upper().replace('\u202f', ' ').strip()
     
     # Determine year format based on length
     parts = date_str.split('/')
     if len(parts) == 3:
         year = parts[2]
         if len(year) == 4:
-            fmt = "%d/%m/%Y %I:%M %p"
+            fmt_with_sec = "%m/%d/%Y %I:%M:%S %p"
+            fmt_without_sec = "%d/%m/%Y %I:%M %p"
         else:
-            fmt = "%d/%m/%y %I:%M %p"
+            fmt_with_sec = "%m/%d/%y %I:%M:%S %p"
+            fmt_without_sec = "%d/%m/%y %I:%M %p"
     else:
         # Fallback, assume 2-digit year
-        fmt = "%d/%m/%y %I:%M %p"
+        fmt_with_sec = "%m/%d/%y %I:%M:%S %p"
+        fmt_without_sec = "%d/%m/%y %I:%M %p"
     
-    return datetime.strptime(f"{date_str} {time_str}", fmt)
+    try:
+        return datetime.strptime(f"{date_str} {time_str}", fmt_with_sec)
+    except ValueError:
+        return datetime.strptime(f"{date_str} {time_str}", fmt_without_sec)

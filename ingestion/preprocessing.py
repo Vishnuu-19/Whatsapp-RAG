@@ -77,12 +77,12 @@ def write_messages_json(messages, output_path: str):
 
 # Format A: [date, time] Sender: message
 FORMAT_A_RE = re.compile(
-    r'^\[(\d{1,2}/\d{1,2}/\d{2}),\s([\d:]+\s[AP]M)\]\s(.+?):\s(.*)'
+    r'\[(\d{1,2}/\d{1,2}/\d{2}),\s([\d:]+\s[AP]M)\]\s(.+?):\s(.*)'
 )
 
 # Format B: date, time - Sender: message  OR system message
 FORMAT_B_RE = re.compile(
-    r'^(\d{1,2}/\d{1,2}/\d{2}),\s([\d:]+\s?(?:am|pm))\s-\s(.*)',
+    r'(\d{1,2}/\d{1,2}/\d{2}),\s([\d:]+\s?(?:am|pm))\s-\s(.*)',
     re.IGNORECASE
 )
 
