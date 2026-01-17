@@ -3,8 +3,8 @@ from ingestion.preprocessing import parse_whatsapp_chat
 from ingestion.chunking import create_chunks
 
 if __name__ == "__main__":
-    # messages = parse_whatsapp_chat(r"data\raw\WhatsApp Chat with Moksaa bday coming.txt")
-    messages = parse_whatsapp_chat(r"data\raw\chat.txt")
+    messages = parse_whatsapp_chat(r"data\raw\WhatsApp Chat with Moksaa bday coming.txt")
+    # messages = parse_whatsapp_chat(r"data\raw\chat.txt")
     df = pd.DataFrame(messages)
     print("Number of messages: ",len(df))
 

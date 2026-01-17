@@ -89,12 +89,19 @@ FORMAT_B_RE = re.compile(
 def parse_whatsapp_chat(file_path: str):
     messages = []
     sender_map = {}
+    message_counter = 0
 
     current_msg = None
     raw_lines = []
+    seen_lines = set()
+    seen_content = set()
 
     with open(file_path, "r", encoding="utf-8") as f:
         for line in f:
+            line = line.rstrip("\n")
+            if line in seen_lines:
+                continue
+            seen_lines.add(line)
             line = line.rstrip("\n")
             matcha = FORMAT_A_RE.search(line)
             matchb = FORMAT_B_RE.search(line)
@@ -106,7 +113,10 @@ def parse_whatsapp_chat(file_path: str):
                     current_msg["raw_lines_count"] = len(raw_lines)
                     current_msg["is_multiline"] = len(raw_lines) > 1
                     current_msg["message_type"] = detect_message_type(current_msg["message"])
-                    messages.append(current_msg)
+                    content = (current_msg["timestamp"], current_msg["sender"], current_msg["message"])
+                    if content not in seen_content:
+                        seen_content.add(content)
+                        messages.append(current_msg)
 
                 # start new message
                 parsed = parse_messages_start(line)
@@ -120,7 +130,7 @@ def parse_whatsapp_chat(file_path: str):
                     sender_id = get_sender_id(sender, sender_map) if sender else None
 
                     current_msg = {
-                        "message_id": str(uuid.uuid4()),
+                        "message_id": f"msg_{message_counter}",
                         "timestamp": timestamp,
                         "sender": sender,
                         "sender_id": sender_id,
@@ -130,6 +140,7 @@ def parse_whatsapp_chat(file_path: str):
                         "raw_lines_count": 0,
                         "is_system": sender == None or is_system_message(first_text) 
                     }
+                    message_counter += 1
                     if current_msg["is_system"]:
                         current_msg["message_type"] = "system"
                     
@@ -146,7 +157,10 @@ def parse_whatsapp_chat(file_path: str):
         current_msg["raw_lines_count"] = len(raw_lines)
         current_msg["is_multiline"] = len(raw_lines) > 1
         if current_msg["message_type"] != "system": current_msg["message_type"] = detect_message_type(current_msg["message"]) 
-        messages.append(current_msg)
+        content = (current_msg["timestamp"], current_msg["sender"], current_msg["message"])
+        if content not in seen_content:
+            seen_content.add(content)
+            messages.append(current_msg)
         
     normal_msgs,noise_msgs = split_noise_messages(messages)
 
