@@ -2,7 +2,7 @@ import chromadb
 from chromadb.config import Settings
 
 COLLECTION_NAME = "whatsapp_chunks"
-PERSIST_DIR = "../vector_store"
+PERSIST_DIR = "vector_store"
 
 # client = chromadb.Client(
 #     Settings(persist_directory = PERSIST_DIR)

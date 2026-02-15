@@ -4,7 +4,7 @@ from vectordb import VectorDB
 
 CHUNKS_PATH = "data/chunks/chunks.json"
 COLLECTION_NAME = "whatsapp_chunks"
-PERSIST_DIR = "../vector_store"
+PERSIST_DIR = "vector_store"
 BATCH_SIZE = 64
 
 def load_chunks(path):
