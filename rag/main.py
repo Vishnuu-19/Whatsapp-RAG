@@ -1,10 +1,11 @@
 import pandas as pd
-from ingestion.preprocessing import parse_whatsapp_chat
-from ingestion.chunking import create_chunks
+from rag.chunking.preprocessing import parse_whatsapp_chat
+from rag.chunking.chunking import create_chunks
+from rag.ingestion.ingest import main as ingest_main
 
 if __name__ == "__main__":
-    messages = parse_whatsapp_chat(r"data\raw\WhatsApp Chat with Moksaa bday coming.txt")
-    # messages = parse_whatsapp_chat(r"data\raw\chat.txt")
+    # messages = parse_whatsapp_chat(r"data\raw\WhatsApp Chat with Moksaa bday coming.txt")
+    messages = parse_whatsapp_chat(r"data\raw\chat.txt")
     df = pd.DataFrame(messages)
     print("Number of messages: ",len(df))
 
@@ -18,3 +19,7 @@ if __name__ == "__main__":
     # print(df[df["is_multiline"] == True][["message_id", "raw_lines_count"]])
     # print(df["raw_lines_count"].value_counts())
     # print(df[df["is_system"]].shape[0])
+
+    print("\nStarting ingestion...")
+    ingest_main()
+    print("\nCompleted ingestion")

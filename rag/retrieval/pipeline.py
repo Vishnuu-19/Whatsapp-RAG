@@ -1,5 +1,5 @@
-from search import Search
-from generator import AnswerGenerator
+from .search import Search
+from .generator import AnswerGenerator
 
 class pipeline:
     def __init__(self, known_senders, collection_name, persist_dir):

@@ -1,6 +1,6 @@
 import json 
-from embedder import Embedder
-from vectordb import VectorDB
+from .embedder import Embedder
+from .vectordb import VectorDB
 
 CHUNKS_PATH = "data/chunks/chunks.json"
 COLLECTION_NAME = "whatsapp_chunks"

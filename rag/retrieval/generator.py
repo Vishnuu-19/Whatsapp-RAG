@@ -41,7 +41,8 @@ class AnswerGenerator:
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True
+            text=True,
+            encoding='utf-8'
         )
 
         output, error = process.communicate(prompt)

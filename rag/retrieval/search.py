@@ -1,5 +1,5 @@
-from query_parser import QueryParser
-from retriever import Retriever
+from .query_parser import QueryParser
+from .retriever import Retriever
 
 class Search:
     def __init__(self, known_senders, collection_name, persist_dir):
