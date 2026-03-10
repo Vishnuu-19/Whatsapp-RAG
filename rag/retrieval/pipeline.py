@@ -11,11 +11,12 @@ class pipeline:
         )
 
         self.gernator = AnswerGenerator()
-
-    def run(self, user_query: str, top_k = 10):
+    
+    def run(self, user_query: str, sources, top_k = 10):
         retrieval_result = self.search.run(
             user_query= user_query,
-            top_k=top_k
+            top_k=top_k,
+            sources = sources
         )
 
         retrieved_chunks = retrieval_result["results"]

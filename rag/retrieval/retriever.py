@@ -7,12 +7,13 @@ class Retriever:
         self.client = chromadb.PersistentClient(path=persist_dir)
         self.collection = self.client.get_collection(collection_name)
 
-    def search(self, semantic_query:str, sender_id: str=None, top_k=10):
+    def search(self, semantic_query:str, sources, sender_id: str=None, top_k=10):
         query_embedding = self.embedder.encode(semantic_query).tolist()
 
         results = self.collection.query(
             query_embeddings=[query_embedding],
-            n_results=top_k
+            n_results=top_k,
+            where={"source":{"$in":sources}} if sources else None
         )
 
         documents = results["documents"][0]

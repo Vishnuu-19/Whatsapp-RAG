@@ -86,7 +86,7 @@ FORMAT_B_RE = re.compile(
     re.IGNORECASE
 )
 
-def parse_whatsapp_chat(file_path: str):
+def parse_whatsapp_chat(file_path: str, file_name:str):
     messages = []
     sender_map = {}
     message_counter = 0
@@ -164,8 +164,9 @@ def parse_whatsapp_chat(file_path: str):
         
     normal_msgs,noise_msgs = split_noise_messages(messages)
 
-    write_messages_json(normal_msgs,"data/processed/messages.json")
-    write_messages_json(noise_msgs,"data/processed/noise_messages.json")
+    write_messages_json(normal_msgs,f"data/processed/{file_name}_messages.json")
+    write_messages_json(noise_msgs,f"data/processed/{file_name}_noise_messages.json")
+    write_messages_json(sender_map, f"data/processed/sender_map")
 
     return normal_msgs
 

@@ -71,7 +71,7 @@ def write_chunks_json(chunks, output_path: str):
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(chunks_copy, f, ensure_ascii=False, indent=2)
 
-def create_chunks(messages):
+def create_chunks(messages, file_name: str):
     chunks = []
     current_chunk = None
     current_embeddings = []
@@ -143,7 +143,7 @@ def create_chunks(messages):
     if current_chunk:
         chunks.append(finalize_chunk(current_chunk))
     
-    write_chunks_json(chunks, "data\\chunks\\chunks.json")
+    write_chunks_json(chunks, f"data/chunks/{file_name}_chunks.json")
     
     return chunks
 

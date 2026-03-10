@@ -39,7 +39,7 @@ print("CHECKPOINT 3: Running RAG Pipeline (Retrieval + Generation)...")
 print("=" * 60)
 start_total = time.time()
 
-result = rag.run(query, top_k=10)
+result = rag.run(query, top_k=10,sources)
 
 total_time = time.time() - start_total
 print(f"✓ RAG Pipeline completed in {total_time:.2f}s\n")
