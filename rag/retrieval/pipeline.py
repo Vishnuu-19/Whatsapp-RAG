@@ -21,6 +21,13 @@ class pipeline:
 
         retrieved_chunks = retrieval_result["results"]
 
+        if not retrieved_chunks:
+            return {
+                "parsed_query": retrieval_result["parsed_query"],
+                "retrieved_chunks": [],
+                "answer": "No relevant chunks found."
+            }
+
         answer = self.generator.generate(
             user_query=user_query,
             retrieved_chunks=retrieved_chunks

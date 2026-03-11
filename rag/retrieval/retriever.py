@@ -8,6 +8,10 @@ class Retriever:
         self.collection = self.client.get_collection(collection_name)
 
     def search(self, semantic_query:str, sources, sender_id: str=None, top_k=10):
+
+        if not sources:
+            return []
+
         query_embedding = self.embedder.encode(semantic_query).tolist()
 
         results = self.collection.query(

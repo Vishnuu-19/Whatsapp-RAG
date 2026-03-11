@@ -148,7 +148,7 @@ def create_chunks(messages, file_name: str):
     if current_chunk:
         chunks.append(finalize_chunk(current_chunk))
     
-    # write_chunks_json(chunks, f"data/chunks/{file_name}_chunks.json")
+    write_chunks_json(chunks, f"data/chunks/{file_name}_chunks.json")
     
     return chunks
 

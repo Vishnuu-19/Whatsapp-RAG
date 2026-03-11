@@ -87,10 +87,31 @@ FORMAT_B_RE = re.compile(
 )
 
 def write_sender_map(sender_map: dict, output_path: str):
-        output_path = Path(output_path)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with output_path.open("w", encoding="utf-8") as f:
-            json.dump(sender_map, f, ensure_ascii=False, indent=2)
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # load existing sender map if it exists
+    if output_path.exists():
+        with output_path.open("r", encoding="utf-8") as f:
+            existing_map = json.load(f)
+    else:
+        existing_map = {}
+
+    # determine next available user id
+    if existing_map:
+        max_id = max(int(v.split("_")[1]) for v in existing_map.values())
+    else:
+        max_id = 0
+
+    # merge sender maps
+    for sender_name in sender_map:
+        if sender_name not in existing_map:
+            max_id += 1
+            existing_map[sender_name] = f"user_{max_id:03d}"
+
+    # write merged map
+    with output_path.open("w", encoding="utf-8") as f:
+        json.dump(existing_map, f, ensure_ascii=False, indent=2)
 
 def parse_whatsapp_chat(file_path: str, file_name:str):
     messages = []
@@ -170,10 +191,10 @@ def parse_whatsapp_chat(file_path: str, file_name:str):
         
     normal_msgs,noise_msgs = split_noise_messages(messages)
 
-    # write_messages_json(normal_msgs,f"data/processed/{file_name}_messages.json")
-    # write_messages_json(noise_msgs,f"data/processed/{file_name}_noise_messages.json")
+    write_messages_json(normal_msgs,f"data/processed/{file_name}_messages.json")
+    write_messages_json(noise_msgs,f"data/processed/{file_name}_noise_messages.json")
 
-    # write_sender_map(sender_map, f"data/processed/sender_map.json")
+    write_sender_map(sender_map, f"data/processed/sender_map.json")
 
     return normal_msgs
 
