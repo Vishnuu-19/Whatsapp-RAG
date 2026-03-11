@@ -86,6 +86,12 @@ FORMAT_B_RE = re.compile(
     re.IGNORECASE
 )
 
+def write_sender_map(sender_map: dict, output_path: str):
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with output_path.open("w", encoding="utf-8") as f:
+            json.dump(sender_map, f, ensure_ascii=False, indent=2)
+
 def parse_whatsapp_chat(file_path: str, file_name:str):
     messages = []
     sender_map = {}
@@ -164,9 +170,10 @@ def parse_whatsapp_chat(file_path: str, file_name:str):
         
     normal_msgs,noise_msgs = split_noise_messages(messages)
 
-    write_messages_json(normal_msgs,f"data/processed/{file_name}_messages.json")
-    write_messages_json(noise_msgs,f"data/processed/{file_name}_noise_messages.json")
-    write_messages_json(sender_map, f"data/processed/sender_map")
+    # write_messages_json(normal_msgs,f"data/processed/{file_name}_messages.json")
+    # write_messages_json(noise_msgs,f"data/processed/{file_name}_noise_messages.json")
+
+    # write_sender_map(sender_map, f"data/processed/sender_map.json")
 
     return normal_msgs
 

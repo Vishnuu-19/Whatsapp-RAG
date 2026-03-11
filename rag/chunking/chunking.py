@@ -65,8 +65,8 @@ def write_chunks_json(chunks, output_path: str):
         chunk_copy = chunk.copy()
         chunk_copy["start_time"] = chunk_copy["start_time"].isoformat()
         chunk_copy["end_time"] = chunk_copy["end_time"].isoformat()
-        chunks_copy.append(chunk_copy)
         chunk_copy["split_similarity"] = float(chunk_copy["split_similarity"]) if chunk_copy["split_similarity"] is not None else None
+        chunks_copy.append(chunk_copy)
 
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(chunks_copy, f, ensure_ascii=False, indent=2)
@@ -76,13 +76,18 @@ def create_chunks(messages, file_name: str):
     current_chunk = None
     current_embeddings = []
 
-    for msg in messages:
+    message_texts = [msg["message"].strip() for msg in messages]
+    all_embeddings = embedder.encode(message_texts)
+
+    prev_msg_ts = None
+
+    for msg, msg_embedding in zip(messages, all_embeddings):
         msg_text = msg["message"].strip()
         msg_ts = msg["timestamp"]
         msg_sender = msg["sender_id"]
 
         #embedding
-        msg_embedding = embedder.encode( msg_text )
+        # msg_embedding = embedder.encode( msg_text )
 
         if current_chunk is None:
             current_chunk = {
@@ -116,7 +121,7 @@ def create_chunks(messages, file_name: str):
             prev_msg_ts = msg_ts
             continue
 
-        if len("".join(current_chunk["texts"])) + len(msg_text) > MAX_CHARS:
+        if sum(len(t) for t in current_chunk["texts"]) + len(msg_text) > MAX_CHARS:
             chunks.append(finalize_chunk(current_chunk))
             current_chunk, current_embeddings = create_new_chunk(
                 msg, msg_embedding, SPLIT_SIZE
@@ -143,7 +148,7 @@ def create_chunks(messages, file_name: str):
     if current_chunk:
         chunks.append(finalize_chunk(current_chunk))
     
-    write_chunks_json(chunks, f"data/chunks/{file_name}_chunks.json")
+    # write_chunks_json(chunks, f"data/chunks/{file_name}_chunks.json")
     
     return chunks
 
