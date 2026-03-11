@@ -1,5 +1,5 @@
-from .query_parser import QueryParser
-from .retriever import Retriever
+from rag.retrieval.query_parser import QueryParser
+from rag.retrieval.retriever import Retriever
 
 class Search:
     def __init__(self, known_senders, collection_name, persist_dir):
@@ -9,10 +9,11 @@ class Search:
             persist_dir = persist_dir
         )
 
-    def run(self, user_query: str, top_k: int=10):
+    def run(self, user_query: str,sources=None, top_k: int=10):
         parsed= self.parser.parse(user_query)
         results = self.retriever.search(
             semantic_query=parsed["semantic_query"],
+            sources = sources,
             sender_id=parsed["sender_id"],
             top_k=top_k
         )

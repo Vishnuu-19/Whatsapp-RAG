@@ -46,7 +46,7 @@ async def ingest_file(upload_file):
     for chunk in chunks:
         ids.append(chunk["chunk_id"])
         metadatas.append({
-            "source": upload_file.filename,
+            "source": file_name,
             "chunk_id": chunk["chunk_id"],
             "sender_id": chunk["sender_id"],
             "start_time": chunk["start_time"].isoformat(),

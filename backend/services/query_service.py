@@ -1,8 +1,10 @@
+import json
 from rag.retrieval.pipeline import pipeline
 
 COLLECTION_NAME = "whatsapp_chunks"
 PERSIST_DIR = "vector_store"
-KNOWN_SENDERS = "data/processed/sender_map.json"
+with open("data/processed/sender_map.json", "r", encoding="utf-8") as f:
+    KNOWN_SENDERS = json.load(f)
 
 rag_pipeline = pipeline(
     known_senders=KNOWN_SENDERS,
@@ -20,5 +22,5 @@ def run_query(question, sources):
     return{
         "parsed_query": result["parsed_query"],
         "answer": result["answer"],
-        "chunks":result["chunks"]
+        "retrieved_chunks":result["retrieved_chunks"]
     }

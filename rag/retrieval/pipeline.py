@@ -1,5 +1,5 @@
-from .search import Search
-from .generator import AnswerGenerator
+from rag.retrieval.search import Search
+from rag.retrieval.generator import AnswerGenerator
 
 class pipeline:
     def __init__(self, known_senders, collection_name, persist_dir):
@@ -10,9 +10,9 @@ class pipeline:
             persist_dir=persist_dir
         )
 
-        self.gernator = AnswerGenerator()
+        self.generator = AnswerGenerator()
     
-    def run(self, user_query: str, sources, top_k = 10):
+    def run(self, user_query: str, sources=None, top_k = 10):
         retrieval_result = self.search.run(
             user_query= user_query,
             top_k=top_k,
@@ -21,7 +21,7 @@ class pipeline:
 
         retrieved_chunks = retrieval_result["results"]
 
-        answer = self.gernator.generate(
+        answer = self.generator.generate(
             user_query=user_query,
             retrieved_chunks=retrieved_chunks
         )
