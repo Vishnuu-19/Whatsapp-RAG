@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { uploadFiles, startIngestion } from "../api/api";
+import { uploadChats } from "../api/api";
 import PacmanLoader from "./PacmanLoader";
 
 function UploadOverlay({ onClose, setIsIngesting, reload}){
@@ -16,7 +16,7 @@ function UploadOverlay({ onClose, setIsIngesting, reload}){
     };
 
     const handleDragOver = (e) => {
-        e.preventDeafault();
+        e.preventDefault();
     };
 
     const handleStartIngestion = async() => {
@@ -26,24 +26,13 @@ function UploadOverlay({ onClose, setIsIngesting, reload}){
             setIsProcessing(true);
             setIsIngesting(true);
 
-            const formData = new FormData();
-            selectedFiles.forEach((file) => {
-                formData.append("files", file);
-            });
+            await uploadChats(selectedFiles);
+            
+            await reload()
 
-            const uploadRes = await uploadFiles(formData);
-
-            const uploadedFiles = uploadRes.data;
-
-            for(let file of uploadedFiles){
-                await startIngestion(file.file_id);
-            }
-
-            setTimeout(async () => {
-                await reload();
-                setIsIngesting(false);
-                onClose();
-            }, 4000);
+            setIsIngesting(false);
+            onClose();
+            
         } catch (error) {
             console.error("ingestion failed.",error);
             setIsIngesting(false);

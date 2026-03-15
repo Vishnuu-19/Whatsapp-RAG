@@ -1,25 +1,26 @@
 import React,{useEffect,useState} from "react";
 import Sidebar from "./components/Sidebar";
 import ChatWindow from "./components/ChatWindow";
-import BottomInput from "./components/BottonInput";
+import BottomInput from "./components/BottomInput";
 import UploadOverlay from "./components/UploadOverlay";
 import ConfirmModal from "./components/ConfirmModal";
-import { getFiles } from "./api/api";
+import { getSources } from "./api/api";
 import "./App.css";
 
 function App() {
-  const [files, setFiles] = useState([]);
+  const [files, setSources] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [isIngesting, setIsIngesting] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
-    loadFiles();
+    loadSources();
   }, []);
 
-  const loadFiles = async () => {
-    const res = await getFiles();
-    setFiles(res.data);
+  const loadSources = async () => {
+    const res = await getSources();
+    setSources(res);
   };
 
   return (
@@ -27,16 +28,23 @@ function App() {
       <Sidebar
         files={files}
         setConfirmDelete={setConfirmDelete}
-        reload={loadFiles}
+        reload={loadSources}
       />
 
       <div className="main-area">
-        {isIngesting && <UploadOverlay />}
-        <ChatWindow isDisabled={isIngesting} />
+        <ChatWindow messages={messages} />
 
         <BottomInput
           disabled={isIngesting}
           onAdd={() => setShowUpload(true)}
+          sources = {files}
+          onAnswer={(msg) => {
+            setMessages((prev) => [
+              ...prev,
+              { type: "user", text: msg.question },
+              { type: "bot", text: msg.answer },
+            ]);
+          }}
         />
       </div>
 
@@ -44,7 +52,7 @@ function App() {
         <UploadOverlay
           onClose={() => setShowUpload(false)}
           setIsIngesting={setIsIngesting}
-          reload={loadFiles}
+          reload={loadSources}
         />
       )}
 
@@ -52,7 +60,7 @@ function App() {
         <ConfirmModal
           file={confirmDelete}
           onClose={() => setConfirmDelete(null)}
-          reload={loadFiles}
+          reload={loadSources}
         />
       )}
     </div>

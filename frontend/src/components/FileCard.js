@@ -1,12 +1,12 @@
 import React from "react";
-import {pauseFile, activateFile} from "../api/api";
+import {deactivateSource, reactivateSource} from "../api/api";
 
 function FileCard({file, setConfirmDelete, reload}){
     const togglePause = async() => {
         if(file.active){
-            await pauseFile(file.file_id);
+            await deactivateSource(file.source_id);
         }else{
-            await activateFile(file.file_id)
+            await reactivateSource(file.source_id);
         }
         reload();
     }
@@ -17,8 +17,8 @@ function FileCard({file, setConfirmDelete, reload}){
                 {file.active ? "⏸" : "▶"}
             </div>
 
-            <div className="file-name">{file.filename}</div>
-            <div className="status">Status: {file.status}</div>
+            <div className="file-name">{file.source_id}</div>
+            <div className="status">Chunks: {file.chunk_count}</div>
 
             <div
                 className="bottom-right"

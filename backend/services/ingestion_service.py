@@ -23,6 +23,7 @@ async def ingest_file(upload_file):
     
     file_name = Path(file_path).stem
 
+    print(f"Ingestion started for {file_name}")
     start = time.time()
     print("parsing started")
     messages = parse_whatsapp_chat(file_path,file_name)
@@ -76,7 +77,7 @@ async def ingest_file(upload_file):
 
     print("Vector insert time:", time.time() - start)
     
-    add_source(upload_file.filename, len(chunks))
+    add_source(file_name, len(chunks))
 
     return{
         "file": upload_file.filename,

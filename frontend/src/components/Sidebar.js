@@ -3,11 +3,11 @@ import FileCard from "./FileCard";
 
 function Sidebar({files, setConfirmDelete, reload}) {
     return(
-        <div classname="sidebar">
-            <h3>Files</h3>
+        <div className="sidebar">
+            <h3>Sources</h3>
             {files.map((file)=>(
                 <FileCard 
-                key={file.file_id} 
+                key={file.source_id} 
                 file={file}
                 setConfirmDelete={setConfirmDelete}
                 reload = {reload}
