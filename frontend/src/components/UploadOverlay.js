@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { uploadChats } from "../api/api";
-import PacmanLoader from "./PacmanLoader";
 
 function UploadOverlay({ onClose, setIsIngesting, reload}){
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -41,6 +40,15 @@ function UploadOverlay({ onClose, setIsIngesting, reload}){
         }
     };
 
+    // Create a ref to trigger the hidden file input
+    const fileInputRef = React.useRef(null);
+
+    const handleZoneClick = () => {
+        if(fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    }
+
     return (
         <div className="upload-overlay">
             <div className="upload-box">
@@ -50,13 +58,16 @@ function UploadOverlay({ onClose, setIsIngesting, reload}){
                         <div className="drop-zone"
                             onDrop={handleDrop}
                             onDragOver={handleDragOver}
-                        >Drag & Drop Files here</div>
+                            onClick={handleZoneClick}
+                        >Drag & Drop Files or Click to Browse</div>
 
                         <input
                             type="file"
                             multiple
                             accept=".txt"
                             onChange={handleFileChange}
+                            ref={fileInputRef}
+                            style={{ display: "none" }}
                         />
 
                         {selectedFiles.length > 0 && (
@@ -67,21 +78,25 @@ function UploadOverlay({ onClose, setIsIngesting, reload}){
                                     <li key={idx}>{file.name}</li>
                                 ))}
                                 </ul>
-
-                                <button onClick={handleStartIngestion}>
-                                Start Ingestion
-                                </button>
                             </div>
                         )}
 
-                        <button className="close-btn" onClick={onClose}>
-                            Cancel
-                        </button>
+                        <div className="modal-actions">
+                            <button className="close-btn" onClick={onClose}>
+                                Cancel
+                            </button>
+                            
+                            {selectedFiles.length > 0 && (
+                                <button onClick={handleStartIngestion}>
+                                    Start Ingestion
+                                </button>
+                            )}
+                        </div>
                     </>
                 ):(
                     <div className="ingestion-state">
                         <h3>Ingestion in progress...</h3>
-                        <PacmanLoader />
+                        {/* We removed the Pacman loader. The text communicates the state clearly. */}
                     </div>
                 )}
             </div>

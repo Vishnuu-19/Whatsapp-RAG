@@ -29,19 +29,21 @@ function BottomInput({disabled, onAdd, sources, onAnswer}){
 
     return(
         <div className="bottom-input">
-            <button onClick={onAdd}>+</button>
+            <button className="add-btn" onClick={onAdd} disabled={disabled}>+</button>
 
-            <input
-                type ="text"
-                placeholder="Ask something..."
-                disabled={disabled}
-                value={query}
-                onChange={(e)=> setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSend();
-                }}
-            />
-            <button disabled={disabled} onClick={handleSend}>Send</button>
+            <div className="input-wrapper">
+                <input
+                    type ="text"
+                    placeholder="Ask something..."
+                    disabled={disabled}
+                    value={query}
+                    onChange={(e)=> setQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSend();
+                    }}
+                />
+            </div>
+            <button className="send-btn" disabled={disabled} onClick={handleSend}>Send</button>
         </div>
     );
 }

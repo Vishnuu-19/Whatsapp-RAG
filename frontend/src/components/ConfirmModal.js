@@ -12,7 +12,7 @@ function ConfirmModal({file, onClose, reload}){
         <div className="modal">
             <div className="modal-content">
                 <h3>Delete {file.source_id}</h3>
-                <button onClick={onclose}>Cancel</button>
+                <button onClick={onClose}>Cancel</button>
                 <button onClick={handleDelete}>Delete</button>
             </div>
         </div>

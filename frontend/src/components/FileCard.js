@@ -12,7 +12,7 @@ function FileCard({file, setConfirmDelete, reload}){
     }
 
     return (
-        <div className={`file-card ${file.active ? "paused" : ""}`}>
+        <div className={`file-card ${!file.active ? "paused" : ""}`}>
             <div className="top-right" onClick={togglePause}>
                 {file.active ? "⏸" : "▶"}
             </div>
